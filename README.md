@@ -43,6 +43,7 @@ Por que Qwen2.5-Instruct: licença aberta, bom desempenho em português para o t
 │   ├── run_experiments.py       # teste de diferentes parâmetros
 │   ├── plot_results.py          # gráficos para o relatório
 │   └── app.py                   # frontend Gradio
+├── notebooks/run_colab.ipynb    # roda tudo em GPU NVIDIA do Colab (para quem não tem GPU NVIDIA local)
 ├── results/                     # CSVs/JSONs das avaliações e experimentos
 ├── docs/img/                    # prints da GPU e gráficos
 ├── requirements.txt
@@ -136,9 +137,15 @@ _Inserir print do frontend aqui: `docs/img/frontend.png`._
 
 ## 10. Evidência da GPU no VSCode
 
+### Opção A – GPU NVIDIA local
+
 1. Instale as extensões **GPU Environment** e **GPU Monitor** no VSCode.
 2. Abra o terminal integrado e rode `python src/check_gpu.py` (ou `nvidia-smi`) durante um treino.
 3. Tire um print com o VSCode mostrando o painel da extensão e o terminal com a GPU em uso e salve em `docs/img/gpu_vscode.png`.
+
+### Opção B – GPU NVIDIA na nuvem (Colab) usada de dentro do VSCode
+
+Para integrantes sem GPU NVIDIA local (ex.: Intel Iris Xe, que não suporta CUDA): instale no VSCode as extensões **Jupyter** e **Google Colab**, abra `notebooks/run_colab.ipynb`, escolha *Select Kernel → Colab* e um runtime com GPU. A saída de `!nvidia-smi` e de `check_gpu.py` no próprio VSCode serve de evidência. A GPU gratuita do Colab não é garantida (confira o modelo na saída); registre aqui qual GPU foi usada: _preencher (ex.: Tesla T4, 15 GB)_.
 
 ![GPU no VSCode](docs/img/gpu_vscode.png)
 
