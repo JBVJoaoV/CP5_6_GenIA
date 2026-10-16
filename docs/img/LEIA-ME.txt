@@ -1,4 +1,0 @@
-Coloque aqui os prints da entrega:
-- gpu_vscode.png (VSCode com GPU Environment/GPU Monitor + terminal com check_gpu.py)
-- frontend.png (interface Gradio)
-Os gráficos experimentos_f1.png e curvas_loss.png são gerados por src/plot_results.py.

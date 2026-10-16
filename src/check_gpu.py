@@ -23,7 +23,7 @@ def main():
     print("GPU:", props.name)
     print(f"VRAM total: {props.total_memory / 1024**3:.1f} GB")
     print(f"Compute capability: {props.major}.{props.minor}")
-    print("bf16 suportado:", torch.cuda.is_bf16_supported())
+    print("bf16 nativo (Ampere+):", props.major >= 8, "-> dtype usado no projeto:", "bf16" if props.major >= 8 else "fp16")
     print("=" * 60)
 
     # Benchmark simples: multiplicação de matrizes em GPU vs CPU

@@ -4,7 +4,7 @@
 
 > Grupo: _preencher nomes e RMs dos 4–5 integrantes_
 
-Projeto que ajusta (fine-tuning com LoRA) um LLM open-source **rodando localmente em GPU** para atuar como assistente de diagnóstico de falhas em equipamentos industriais. O usuário descreve o problema em linguagem natural e o modelo responde em um formato padronizado de quatro seções: **Causa provável, Verificações, Ação recomendada e Segurança**.
+Projeto que ajusta (fine-tuning com LoRA) um LLM open-source, **treinado e executado por nós em GPU NVIDIA** (runtime do Google Colab acessado pelo VSCode), para atuar como assistente de diagnóstico de falhas em equipamentos industriais. O usuário descreve o problema em linguagem natural e o modelo responde em um formato padronizado de quatro seções: **Causa provável, Verificações, Ação recomendada e Segurança**.
 
 ## 1. Problema escolhido
 
@@ -84,95 +84,122 @@ Todos os scripts abortam com erro se não houver GPU CUDA, garantindo que os tes
 
 ## 7. Parâmetros testados
 
-`run_experiments.py` varia **um parâmetro por vez** a partir da configuração baseline e depois varre a temperatura de geração na melhor configuração.
+Modelo `Qwen/Qwen2.5-1.5B-Instruct` com fine-tuning LoRA. Foi usada a versão rápida da bateria (`python src/run_experiments.py --quick`): a configuração de referência e duas variações de **um parâmetro por vez**, com semente fixa 42.
 
 | Experimento | LoRA r | Learning rate | Épocas |
 |---|---|---|---|
 | baseline | 8 | 2e-4 | 3 |
-| r4 | 4 | 2e-4 | 3 |
 | r16 | 16 | 2e-4 | 3 |
-| lr1e-4 | 8 | 1e-4 | 3 |
 | lr5e-4 | 8 | 5e-4 | 3 |
-| ep5 | 8 | 2e-4 | 5 |
-| ep8 | 8 | 2e-4 | 8 |
 
-Geração: temperatura em {0.0, 0.3, 0.7, 1.0} com top_p = 0.9 (semente fixa 42 para a amostragem).
+Na configuração vencedora foi variada também a **temperatura de geração** (0.0, 0.3, 0.7 e 1.0, com top_p = 0.9). As demais configurações previstas no script (`r4`, `lr1e-4`, `ep5`, `ep8`) não foram executadas por limite de tempo.
 
 ## 8. Avaliação
 
-Conjunto de validação (relatos originais, nunca usados no treino). Métricas:
+Conjunto de validação com **12 relatos** que não foram usados no treino. Geração determinística (temperatura 0) com até 256 tokens novos. Métricas:
 
-- **eval_loss / perplexidade** no treino (`outputs/<exp>/metrics.json`);
+- **eval_loss / perplexidade** na validação (`outputs/<exp>/metrics.json`, não versionado);
 - **token F1**: sobreposição de palavras entre a resposta gerada e a de referência;
-- **estrutura**: fração das 4 seções obrigatórias presentes (mede se o modelo aprendeu o formato);
-- **tokens/s** e **VRAM de pico** (desempenho em GPU);
-- **avaliação qualitativa**: leitura manual das respostas em `results/eval_<tag>.csv`, comparando base vs. fine-tuned (precisão técnica, coerência e segurança).
+- **estrutura**: fração das 4 seções obrigatórias presentes na resposta;
+- **tokens/s**, **tempo de treino** e **VRAM de pico** (desempenho em GPU);
+- **avaliação qualitativa**: leitura das respostas, que estão em `results/eval_<tag>.csv`.
 
-### Resultados
+### Resultados (execução final, NVIDIA A100 80 GB)
 
-_Preencher após rodar `python src/run_experiments.py` na máquina com GPU (copie de `results/experiments.csv` e `results/gen_sweep.csv`)._
+| Experimento | token F1 | estrutura | eval_loss | perplexidade | loss de treino | tempo de treino (s) | VRAM de pico (GB) |
+|---|---|---|---|---|---|---|---|
+| base (sem fine-tuning) | ⚠ ≈0,29 | ⚠ 1,00 | – | – | – | – | – |
+| **baseline** (r=8, lr=2e-4, 3 ép.) | **0,4397** | 1,00 | **1,844** | **6,32** | 1,236 | 41,5 | 9,52 |
+| r16 | 0,4111 | 1,00 | 2,118 | 8,32 | 0,978 | 40,3 | 9,67 |
+| lr5e-4 | 0,4087 | 1,00 | 2,616 | 13,68 | 0,746 | 41,5 | 9,52 |
 
-| Experimento | token F1 | estrutura | eval_loss | perplexidade | tempo de treino (s) | VRAM pico (GB) |
-|---|---|---|---|---|---|---|
-| base (sem fine-tuning) | | | – | – | – | – |
-| baseline | | | | | | |
-| ... | | | | | | |
+> ⚠ Os valores da linha "base" (F1 e estrutura) foram lidos do gráfico; o valor exato está em `results/eval_base.json` e deve substituir estes antes da entrega.
+
+**Temperatura de geração** (adaptador baseline):
+
+| Temperatura | token F1 | estrutura | tokens/s |
+|---|---|---|---|
+| **0.0** | **0,4397** | 1,00 | 13,8 |
+| 0.3 | 0,4292 | 1,00 | 13,5 |
+| 0.7 | 0,3939 | 1,00 | 13,1 |
+| 1.0 | 0,3729 | 1,00 | 13,3 |
 
 ![Comparação](docs/img/experimentos_f1.png)
-![Loss](docs/img/curvas_loss.png)
 
-### Análise (preencher)
+![Loss de treino](docs/img/curvas_loss.png)
 
-- Qual configuração foi a melhor e por quê?
-- O que mudou entre o modelo base e o fine-tuned (formato, idioma, segurança)?
-- Houve sinais de overfitting (muitas épocas / learning rate alto)?
-- Exemplos de acertos e erros (cole 2–3 respostas de `results/eval_*.csv`).
-- Limitações e melhorias futuras (mais dados, avaliação por especialista, RAG com manuais).
+_Nota: a curva `best` é uma cópia da `baseline` (o script copia a melhor configuração para `outputs/best`), por isso as duas se sobrepõem._
+
+### Execução anterior (NVIDIA Tesla T4, 14,6 GB)
+
+A mesma bateria (`--quick`) foi executada antes em uma GPU Tesla T4, o que permite comparar o desempenho e a estabilidade dos resultados:
+
+| Experimento | token F1 | eval_loss | tempo de treino (s) | VRAM de pico (GB) |
+|---|---|---|---|---|
+| base | 0,2966 | – | – | – |
+| baseline | 0,4170 | 1,850 | 590 | 10,19 |
+| r16 | 0,4157 | 2,115 | 594 | 10,35 |
+| lr5e-4 | 0,4056 | 2,615 | 592 | 10,19 |
+
+Evolução do eval_loss por época na T4 (do log de treino):
+
+| Experimento | época 1 | época 2 | época 3 |
+|---|---|---|---|
+| baseline | 1,656 | 1,730 | 1,850 |
+| r16 | 1,651 | 1,925 | 2,115 |
+| lr5e-4 | 1,701 | 2,328 | 2,615 |
+
+### Análise
+
+**Ganho do fine-tuning.** O token F1 subiu de cerca de 0,29 (modelo base) para 0,44 (baseline), ou seja, as respostas ficaram bem mais próximas das respostas de referência. A métrica de estrutura não discrimina os modelos: o prompt de sistema já exige as 4 seções e o modelo base as segue quase sempre (na execução da T4, o base errou uma seção em uma das 12 respostas e o fine-tuned acertou todas). O ganho aparece, portanto, no conteúdo, no vocabulário técnico e na concisão (ver exemplo abaixo).
+
+**Escolha da melhor configuração.** A baseline (r=8, lr=2e-4, 3 épocas) teve o maior F1 e o menor eval_loss nas duas execuções, e a ordenação baseline > r16 > lr5e-4 se repetiu na T4 e na A100. As margens, porém, são pequenas: a mesma configuração obteve F1 de 0,417 (T4) e 0,440 (A100), uma variação de 0,023 entre execuções com a mesma semente (precisão numérica e hardware diferentes), parecida com a diferença de 0,029 entre baseline e r16 na A100. Com apenas 12 exemplos de validação, esse resultado é um indício e não uma prova de que a baseline é a melhor.
+
+**Overfitting.** Na A100, quanto mais agressivo o treino, menor a loss de treino (1,24 → 0,98 → 0,75) e maior o eval_loss (1,84 → 2,12 → 2,62). O log da T4 mostra o mesmo padrão por época: em todas as configurações o eval_loss é mínimo na época 1 e sobe depois. Com lr=5e-4 a loss de treino chega a 0,09 no fim, o que indica memorização do conjunto de treino (47 relatos originais). Menos épocas ou learning rate menor provavelmente generalizariam melhor (não testado).
+
+**Temperatura.** O F1 cai de forma contínua com a temperatura (0,440 → 0,429 → 0,394 → 0,373). Para um assistente de manutenção, a geração determinística (temperatura 0) é a melhor escolha, pois dá a mesma resposta para o mesmo relato e o maior F1. Na execução da T4 a temperatura 0.3 ficou ligeiramente acima da 0.0 (0,425 contra 0,417), diferença dentro do ruído.
+
+**Desempenho em GPU.** O treino da baseline (3 épocas, 72 passos) levou 41,5 s na A100 e 590 s na T4, cerca de 14 vezes mais rápido, usando ~9,5 a 10 GB de VRAM. Já a geração de texto foi igualmente lenta nas duas GPUs (cerca de 13,5 tokens/s com o adaptador), o que indica que, ao gerar uma resposta por vez, o gargalo não é a capacidade de cálculo da GPU. O adaptador LoRA também deixou a geração mais lenta que a do modelo base na T4 (13,5 contra 26 tokens/s); uma causa provável é o adaptador ser aplicado separadamente do modelo, e fundir os pesos (`merge_and_unload`) costuma recuperar a velocidade (não testado).
+
+**Exemplo de resposta** (relato do conjunto de validação, nunca visto no treino):
+
+> **Relato:** A IHM perdeu a comunicação com o CLP e mostra falha de timeout em intervalos.
+
+**Modelo base:** expande as siglas de forma errada ("Controlador Local do Processamento" para CLP e "Interface Humana Modular" para IHM), sugere "fornecer mais energia à máquina" e a resposta é cortada no limite de 256 tokens, no meio da frase da seção de segurança.
+
+**Modelo fine-tuned:**
+```
+Causa provável: cabo ou terminador desgastados, distância acima do limite ou interferência elétrica.
+Verificações: medir a tensão do cabo; verificar a distância entre o PLC e a IHM; testar a conexão via jumper ou terminador separado; checar o sinal de rede.
+Ação recomendada: trocar o terminador, reapertar a ligação, cortar e retutorializar o cabo e corrigir a rede de comunicação.
+Segurança: desenergizar e aguardar a descarga do cabo antes de intervir na fiação; usar EPI para trabalhar perto de cabos energizados.
+```
+
+**Referência do dataset:** causa em cabo/conector, endereço IP ou escravo mal configurado e ruído na rede; verificar cabo, LEDs, ping, endereços e conflitos de IP; segurança com LOTO.
+
+O fine-tuned respondeu de forma curta, completa e no formato pedido, e acertou a família do problema (cabo, rede, interferência), ao contrário do base. Mas também cometeu erros: usou "PLC" em vez de "CLP", inventou a palavra "retutorializar", propôs "terminador" e "descarga do cabo", que fazem pouco sentido para este caso, e não mencionou a configuração de endereços de rede nem conflitos de IP, que são causas comuns. Isso mostra que o modelo aprendeu o estilo e o vocabulário, mas não garante a correção técnica.
+
+**Limitações e melhorias.** O dataset é pequeno (59 exemplos, 47 no treino) e a métrica F1 por tokens compara cada resposta com uma única referência, penalizando respostas corretas escritas de outra forma. Melhorias possíveis: mais exemplos revisados por profissional de manutenção; avaliação por especialista ou por um modelo juiz; várias sementes por configuração para medir a variância; testar menos épocas e as demais configurações do script; RAG com manuais técnicos. As respostas do modelo não substituem a avaliação de um técnico habilitado.
 
 ## 9. Frontend
 
-`python src/app.py` abre uma interface Gradio onde o usuário escreve o prompt (relato do problema), escolhe entre **modelo base** e **fine-tuned**, ajusta temperatura, top_p e tamanho máximo da resposta e vê a latência e a GPU em uso.
+`python src/app.py` abre uma interface Gradio onde o usuário escreve o prompt (o relato do problema), escolhe entre o **modelo base** e o **fine-tuned**, ajusta temperatura, top_p e tamanho máximo da resposta e vê a latência e a GPU em uso. No Colab, use `python src/app.py --share` para obter um link público temporário (`https://...gradio.live`).
 
-_Inserir print do frontend aqui: `docs/img/frontend.png`._
+![Frontend](docs/img/frontend.png)
 
 ## 10. Evidência da GPU no VSCode
 
-### Opção A – GPU NVIDIA local
+Os testes foram feitos em **GPU NVIDIA com CUDA**, usando o VSCode com as extensões **Jupyter** e **Google Colab** para conectar o notebook `notebooks/run_colab.ipynb` a um runtime com GPU. A evidência é a saída de `nvidia-smi` e de `python src/check_gpu.py` dentro do próprio VSCode:
 
-1. Instale as extensões **GPU Environment** e **GPU Monitor** no VSCode.
-2. Abra o terminal integrado e rode `python src/check_gpu.py` (ou `nvidia-smi`) durante um treino.
-3. Tire um print com o VSCode mostrando o painel da extensão e o terminal com a GPU em uso e salve em `docs/img/gpu_vscode.png`.
+| Execução | GPU | VRAM | CUDA / PyTorch |
+|---|---|---|---|
+| Final | NVIDIA A100-SXM4-80GB | 79,3 GB | CUDA 13.0 / PyTorch 2.11.0+cu130 (driver 580.82.07) |
+| Anterior | NVIDIA Tesla T4 | 14,6 GB | CUDA 13.0 / PyTorch 2.11.0+cu130 |
 
-### Opção B – GPU NVIDIA na nuvem (Colab) usada de dentro do VSCode
-
-Para integrantes sem GPU NVIDIA local (ex.: Intel Iris Xe, que não suporta CUDA): instale no VSCode as extensões **Jupyter** e **Google Colab**, abra `notebooks/run_colab.ipynb`, escolha *Select Kernel → Colab* e um runtime com GPU. A saída de `!nvidia-smi` e de `check_gpu.py` no próprio VSCode serve de evidência. A GPU gratuita do Colab não é garantida (confira o modelo na saída); registre aqui qual GPU foi usada: _preencher (ex.: Tesla T4, 15 GB)_.
+O `check_gpu.py` na A100 reportou compute capability 8.0 e uma multiplicação de matrizes 4096×4096 cerca de 429 vezes mais rápida que na CPU.
 
 ![GPU no VSCode](docs/img/gpu_vscode.png)
 
-## 11. Checklist da entrega
+## 11. Tecnologias
 
-- [ ] LLM escolhido e justificado (seção 2)
-- [ ] Problema específico definido (seção 1)
-- [ ] Diferentes parâmetros testados (seção 7)
-- [ ] Modelo avaliado, respostas analisadas (seção 8)
-- [ ] Testes feitos em GPU (print em `docs/img/gpu_vscode.png`)
-- [ ] Frontend funcionando (print em `docs/img/frontend.png`)
-- [ ] Código e documentação no GitHub (link enviado na plataforma)
-- [ ] Nomes do grupo no topo do README
-
-## 12. Publicando no GitHub
-
-```bash
-git init
-git add .
-git commit -m "CP2/CP3: fine-tuning LoRA para assistente de manutenção industrial"
-git branch -M main
-git remote add origin https://github.com/<usuario>/<repositorio>.git
-git push -u origin main
-```
-
-Antes do `git add`, confirme que `docs/img/` tem os prints e que `results/` tem os CSVs/JSONs gerados na GPU (o `.gitignore` já exclui `outputs/`, `.venv/` e `data/train.jsonl`/`val.jsonl`, que são regenerados por `prepare_data.py`). Cada integrante deve ter commits no repositório.
-
-## 13. Tecnologias
-
-Python, PyTorch (CUDA), Hugging Face Transformers, PEFT (LoRA), Gradio, pandas, matplotlib.
+Python, PyTorch (CUDA), Hugging Face Transformers, PEFT (LoRA), Gradio, pandas, matplotlib, Google Colab.

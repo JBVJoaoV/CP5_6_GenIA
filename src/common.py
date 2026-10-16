@@ -1,5 +1,6 @@
 """Funções compartilhadas: prompt de sistema, dados e carregamento/geração do modelo."""
 import json
+import os
 import time
 from contextlib import nullcontext
 from pathlib import Path
@@ -38,7 +39,18 @@ def gpu_summary():
 
 
 def best_dtype():
-    return torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+    """bf16 só em GPUs com suporte nativo (Ampere+, compute capability >= 8).
+
+    Em GPUs como a T4 (7.5), torch.cuda.is_bf16_supported() pode devolver True por emulação,
+    que é lenta; nelas usamos fp16. Para forçar: variável de ambiente LLM_DTYPE=bf16 ou fp16.
+    """
+    forced = os.environ.get("LLM_DTYPE", "").lower()
+    if forced in ("bf16", "bfloat16"):
+        return torch.bfloat16
+    if forced in ("fp16", "float16"):
+        return torch.float16
+    major, _ = torch.cuda.get_device_capability()
+    return torch.bfloat16 if major >= 8 else torch.float16
 
 
 def build_prompt(tokenizer, question):

@@ -52,6 +52,10 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     args = ap.parse_args()
 
+    if args.adapter and not Path(args.adapter).exists():
+        # sem isso, um treino que falhou faria a avaliação rodar silenciosamente o modelo BASE
+        raise SystemExit(f"Adaptador não encontrado: {args.adapter}. O treino falhou? Veja o erro do train.py.")
+
     torch.manual_seed(args.seed)  # amostragem (temperatura > 0) reprodutível
     assistant = Assistant(args.model, args.adapter)
     rows = load_jsonl(args.data)
