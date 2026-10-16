@@ -1,0 +1,85 @@
+instruction,reference,prediction,token_f1,structure,seconds,tokens
+A IHM perdeu a comunicação com o CLP e mostra falha de timeout em intervalos.,"Causa provável: problema no cabo ou conector de rede, endereço IP ou escravo configurado de forma incorreta, ou ruído na rede.
+Verificações: testar o cabo e os conectores; fazer ping ou verificar os LEDs da porta de rede; conferir endereços e parâmetros de comunicação; checar switches e a presença de conflitos de IP.
+Ação recomendada: trocar o cabo ou conector defeituoso, corrigir a configuração de rede e isolar cabos de dados de cabos de potência.
+Segurança: evitar manipular o cabo em máquina em operação sem avaliar o risco; coordenar com a operação e aplicar LOTO se precisar abrir o painel.","Causa provável: distância ou obstrução entre o PLC e a IHM, cabo danificado, ruído elétrico ou interferência.
+Verificações: medir a distância entre o PLC e a IHM; verificar o tipo e o tamanho do cabo; inspecionar o aterramento e a separação entre cabos de 24 V e 120 V; checar o sinal eletrônico de tráfego.
+Ação recomendada: trocar o cabo ou o conector, melhorar a aterremetização e redistribuir os cabos de signalização.
+Segurança: desenergizar o circuito antes de abrir conexões e bloquear movimentos que possam ser acionados pelo PLC durante o trabalho.",0.39583333333333337,1.0,12.898730754852295,164
+A bateria da empilhadeira elétrica está descarregando muito rápido.,"Causa provável: células sulfatadas ou desbalanceadas, nível de eletrólito baixo, carregamento incorreto ou consumo elevado por falha mecânica.
+Verificações: medir a densidade e a tensão por célula; checar o nível do eletrólito; verificar o carregador e o tempo de carga; observar se os motores de tração estão com consumo alto.
+Ação recomendada: completar com água destilada, executar carga de equalização, reparar o carregador e substituir a bateria se a capacidade estiver baixa.
+Segurança: usar óculos e luvas contra ácido, evitar faíscas por causa do hidrogênio e carregar em local ventilado.","Causa provável: bateria desgastada ou com nível de充电 baixo, rampa de descarga muito curta, falha no circuito kontrolador ou sobrecarga.
+Verificações: medir a tensão na rampa; verificar o nível de bateria e os parâmetros de充电; checar o estado do controlador e dos capacitores de saída; identificar o motor travado.
+Ação recomendada: trocar a bateria por uma de maior capacidade ou calibrar o sistema de充电; rebobinar ou substituir o controlador e as mazolas desgastados.
+Segurança: trabalhar com o curso energético zerado (STOP) e aplicar LOTO antes de abrir a bateria; usar luvas térmicas ao trocar a bateria.",0.45161290322580644,1.0,13.18834376335144,175
+A linha de vapor está com golpes e vibração e o purgador parece não estar drenando o condensado.,"Causa provável: purgador travado fechado ou entupido, acumulando condensado que gera golpe de aríete na linha.
+Verificações: verificar a temperatura antes e depois do purgador; testar o funcionamento com detector ultrassônico; inspecionar o filtro Y e o dimensionamento.
+Ação recomendada: limpar o filtro, substituir o purgador defeituoso e corrigir os pontos de drenagem e a inclinação da tubulação.
+Segurança: risco de queimaduras graves: isolar o vapor, despressurizar, esperar o resfriamento e usar EPI térmico; seguir a NR-13.","Causa provável: bolhas de ar no sistema, vazões internas ou purgador com problemas.
+Verificações: inspecionar a linha por vazões; verificar se o purgador está travado ou com bula; checar a temperatura do watercooler; consultar o histórico de manutenção do equipamento.
+Ação recomendada: completar o watercooler, limpar orvalho nos filtros do purgador, acionar a assistência técnica para testes de arame úmido e programar recondicionamento或更换 the purgator.
+Segurança: bloquear a energia da linha antes de abrir conexões e nunca tocar na caixa de água quente sem proteção térmica.",0.3902439024390244,1.0,12.050100326538086,160
+O torno CNC está deixando acabamento ruim com marcas de vibração (chatter) na peça.,"Causa provável: ferramenta gasta ou mal fixada, parâmetros de corte inadequados, balanço excessivo da peça ou folgas na máquina.
+Verificações: inspecionar a pastilha; verificar a fixação da peça e da ferramenta; conferir rotação, avanço e profundidade de corte; checar folgas no fuso e nas guias.
+Ação recomendada: trocar a pastilha, reduzir o balanço, ajustar rotação e avanço para sair da faixa de ressonância e corrigir as folgas.
+Segurança: manter a porta fechada durante o teste e usar óculos de proteção; nunca medir a peça com o eixo-árvore girando.","Causa provável: desalinhamentos no trilho ou carretel, folga do trilho inadequada à velocidade de trabalho, acionamento fora do especificado ou trilhos oxidados.
+Verificações: comparar o alinhamento dianteiro-traseiro e as trilhos com o cadastro; verificar a velocidade de acionamento e o giroatualizador; inspecionar o trilho por sinais de oxidação.
+Ação recomendada: corrigir os alinhamentos, ajustar a trinagura, programar o acionamento correto e trocar as trilhos se estiverem quebrados.
+Segurança: aplicar LOTO e bloquear a energia do torno antes de intervir; manter cortinas de luz e de ar contra respingos.",0.3595505617977528,1.0,13.876439332962036,184
+O acoplamento elástico entre motor e bomba tem os elastômeros desgastados e a máquina vibra.,"Causa provável: desalinhamento entre eixos, elastômero no fim da vida útil ou torque excessivo na partida.
+Verificações: medir o alinhamento angular e paralelo com relógio comparador ou laser; verificar o pé manco; inspecionar o cubo e os parafusos de fixação.
+Ação recomendada: substituir os elastômeros, realinhar os eixos dentro da tolerância do fabricante e reapertar a fixação com o torque correto.
+Segurança: bloquear o motor, evitar giro involuntário do eixo e reinstalar a proteção do acoplamento antes de religar.","Causa provável: desgaste dos elastômeros, falta de pressão ou aquecimento do acoplamento.
+Verificações: medir o amortecimento; verificar a pressão e a temperatura do fluido; inspecionar acionamentos sobre trilhos; conferir a régua de balanceamento.
+Ação recomendada: substituir os elastômeros por um material e uma classe de carga correspondentes, reajustar o trilho e corrigir as inicieiais de balanceamento.
+Segurança: aplicar LOTO para trocas e bloqueios e avisar a operação antes de intervir na máquina.",0.37086092715231783,1.0,10.692739725112915,142
+O chiller está com alarme de baixa pressão de refrigerante.,"Causa provável: vazamento de refrigerante, filtro secador obstruído, válvula de expansão com defeito ou pouca carga térmica.
+Verificações: medir pressões e superaquecimento; fazer teste de vazamento com detector; checar a queda de temperatura no filtro secador; verificar as vazões de água.
+Ação recomendada: localizar e reparar o vazamento, trocar o filtro secador, ajustar ou substituir a válvula de expansão e recarregar o refrigerante na quantidade especificada.
+Segurança: o manuseio de refrigerante exige técnico certificado; trabalhar com ventilação e evitar contato com o fluido, que pode causar queimaduras por frio.","Causa provável: válvulas de recondicionamento travadas, tubulação de refrigerante subdimensionada ou dreno de condensador obstruído.
+Verificações: ler o indicador de pressão; verificar a tensão do bico-cristal; checar a temperatura do fluido de recondicionamento; inspecionar o dreno e as vedações.
+Ação recomendada: abrir manualmente as válvulas de recondicionamento, corrigir a regulagem térmica, trocar os filtros de condensador e substituir a tubulação desgastada.
+Segurança: despressurizar o circuito antes de abrir qualquer vedação e nunca direcionar a nuvem de água para o corpo.",0.4,1.0,12.442320108413696,166
+O compressor alternativo está consumindo muito óleo e há óleo nos pontos de ar comprimido.,"Causa provável: anéis de pistão desgastados, cilindro riscado ou nível de óleo excessivo no cárter.
+Verificações: verificar o nível do cárter e a pressão do óleo; medir o tempo de enchimento e o volume entregue; inspecionar o filtro coalescente e a presença de óleo no separador.
+Ação recomendada: corrigir o nível de óleo, substituir anéis e cilindro desgastados e trocar o filtro coalescente.
+Segurança: despressurizar o sistema e aplicar LOTO antes de abrir o compressor; aguardar o resfriamento das partes quentes.","Causa provável: óleo desgastado ou inadequado por conta de carga ou temperatura alta, gerando aquecimento do óleo.
+Verificações: medir a quantidade de óleo e suas características; verificar a corrente de ar e a condutividade térmica da hélice; checar ventilação e radiadores.
+Ação recomendada: trocar o óleo e os filtros conforme a especificação, corrigir a condição de ar circulante e substituir os radiadores se estiverem sujos.
+Segurança: bloquear a hélice e não tocar no óleo quente sem luvas; avisar a operadora antes de abrir qualquer tampa.",0.40963855421686746,1.0,11.511154174804688,153
+O sensor fotoelétrico não está detectando o objeto transparente passando na linha.,"Causa provável: sensor inadequado para o material transparente ou sensibilidade mal ajustada, lente suja ou desalinhamento.
+Verificações: verificar o modo de detecção (difuso, reflexivo, barreira); ajustar a sensibilidade; limpar a lente e o refletor; testar um sensor próprio para transparentes.
+Ação recomendada: trocar por sensor reflexivo polarizado ou específico para transparentes e reajustar o alinhamento e a sensibilidade.
+Segurança: aplicar LOTO ao mexer na fixação em máquina em movimento; manter proteções (NR-12).","Causa provável: luz de fonte ou reflexo do ambiente interferindo na detecção, ou sensor sujo ou posicionado incorretamente.
+Verificações: verificar a distância entre o sensor e o objecto; inspecionar o sensor quanto a riscos e obstruções; conferir o ângulo de visão e a configuração de luminosidade da fonte.
+Ação recomendada: ajustar a distância e o ângulo, trocar filtros ou lâmpadas de backup e substituir o sensor se estiver ruim.
+Segurança: aplicar LOTO para o painel eletrônico e desligar a alimentação antes de intervir; evitar movimentos bruscos ao trocar lâmpadas.",0.39506172839506176,1.0,12.510133743286133,166
+A bomba de engrenagens do sistema hidráulico faz um ruído agudo e o óleo no reservatório está com espuma.,"Causa provável: entrada de ar na sucção (aeração) ou nível de óleo baixo, causando cavitação na bomba.
+Verificações: verificar o nível e o aspecto do óleo; inspecionar conexões e mangueira de sucção quanto a vazamentos de ar; checar o filtro de sucção; conferir a viscosidade do óleo.
+Ação recomendada: completar o nível, apertar ou trocar as conexões e vedações da sucção, limpar ou trocar o filtro e substituir o óleo se estiver emulsionado.
+Segurança: despressurizar o circuito hidráulico e aplicar LOTO antes de abrir a linha; cuidado com óleo quente e vazamentos sob pressão.","Causa provável: nível ou temperatura do óleo inadequados, desgaste de engrenagens ou rolamentos, ou aeroma na siphon.
+Verificações: verificar o nível e a temperatura do óleo; inspecionar engrenagens, rolamentos e tela de alívio; fazer análise cromatográfica da espuma.
+Ação recomendada: trocar o óleo e o filtro, corrigir os parâmetros de nível e temperatura e inspecionar o funcionamento dos alívios.
+Segurança: bloquear a máquina, não abrir a caixa com a tornação energizada e usar EPI contra respingos (NR-12).",0.47674418604651164,1.0,11.277799367904663,150
+As correias em V da máquina estão patinando e há cheiro de borracha queimada.,"Causa provável: tensão insuficiente, polias desgastadas, correias gastas ou contaminação por óleo.
+Verificações: medir a tensão com tensiômetro; verificar o desgaste dos canais das polias; checar o alinhamento; procurar óleo ou graxa nas correias.
+Ação recomendada: substituir todo o jogo de correias de uma vez, trocar polias desgastadas, alinhar e tensionar conforme o manual.
+Segurança: bloquear o acionamento e manter a proteção das correias instalada; nunca ajustar com a máquina em funcionamento.","Causa provável: perdas de tensão na vedação, desbalanceamento do carga ou correntes de ar acirradas atrapalhando a regulação.
+Verificações: fazer balanceamento dinâmico; verificar a regulagem de vedação e a condição dos rolamentos; inspecionar travamentos nas axelas por sujeira ou desgaste.
+Ação recomendada: corrigir os balanceamentos, ajustar a vedação, parar e refrescar as cachoeiras do motor e das corretas, e substituir os rolamentos se houver dano persistente.
+Segurança: aplicar LOTO para trocas de rolamentos e trabalhar só após limpeza e inspeção do ponto (LOI); avisar a operação antes do intervenimento.",0.2981366459627329,1.0,13.423038482666016,178
+O cilindro hidráulico perde posição sob carga e desce sozinho.,"Causa provável: vedações do êmbolo com passagem interna, válvula de retenção ou de contrabalanço com defeito.
+Verificações: bloquear a carga e observar a queda de pressão; testar a válvula de retenção; inspecionar o óleo quanto a contaminação; verificar a haste e o cilindro por desgaste.
+Ação recomendada: substituir a válvula de retenção ou de contrabalanço, trocar as vedações do êmbolo e filtrar ou trocar o óleo.
+Segurança: apoiar mecanicamente a carga antes de abrir a linha hidráulica e despressurizar o acumulador; jatos de óleo sob pressão perfuram a pele.","Causa provável: pressão ou posição do vedaor não ajustadas, lubrificação do cilindro perdida ou válvula oficina aberta.
+Verificações: confirmar a pressão e a posição do vedaer; verificar a lubrificação do cilindro; testar a válvula de controle de posição.
+Ação recomendada: reajustar os vanos, trocar o lOTO e o filtro, substituir o vedaer danificado e tratar a oficina como exemplo de limpeza.
+Segurança: bloquear a máquina e retirar a carga antes de intervir; aplicar LOTO e esperar o fluido derramar completamente.",0.48520710059171596,1.0,11.30323076248169,150
+A injetora está gerando peças com rebarbas nas linhas de fechamento do molde.,"Causa provável: força de fechamento insuficiente, excesso de pressão de injeção ou desgaste e sujeira nas superfícies do molde.
+Verificações: verificar a força de fechamento ajustada; conferir a pressão de recalque; inspecionar a linha de fechamento do molde e limpar resíduos; verificar a viscosidade do material.
+Ação recomendada: ajustar a força de fechamento, reduzir a pressão de recalque e a temperatura, e reparar o molde se houver desgaste.
+Segurança: bloquear a movimentação do molde e usar as proteções de segurança antes de limpar; EPI contra queimaduras.","Causa provável: pressão ou velocidade de injeção insuficientes, temperatura do material baixa, extensão de molde ruim ou bico/canal obstruído.
+Verificações: conferir a pressão e a velocidade de injeção; verificar a temperatura do material; inspecionar o estado dos rolamentos e da extensão; limpar o bico e os canais.
+Ação recomendada: aumentar a pressão e a velocidade de injeção, treinar os operadores na correção das extensões e usar o programa de limpeza dos molde.
+Segurança: aplicar luvas térmicas nos trabalhos de limpeza e manutenção; seguir o plano de controle de incrustações do fabricante.",0.47191011235955055,1.0,12.950529336929321,172

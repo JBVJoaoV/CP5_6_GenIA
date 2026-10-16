@@ -1,0 +1,11 @@
+{
+  "tag": "base",
+  "adapter": null,
+  "temperature": 0.0,
+  "top_p": 0.9,
+  "max_new_tokens": 256,
+  "token_f1": 0.2853,
+  "structure": 1.0,
+  "tokens_per_s": 30.6,
+  "n": 12
+}

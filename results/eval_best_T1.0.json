@@ -1,0 +1,11 @@
+{
+  "tag": "best_T1.0",
+  "adapter": "outputs/baseline/adapter",
+  "temperature": 1.0,
+  "top_p": 0.9,
+  "max_new_tokens": 256,
+  "token_f1": 0.3729,
+  "structure": 1.0,
+  "tokens_per_s": 13.3,
+  "n": 12
+}

@@ -2,7 +2,7 @@
 
 **CP2/CP3 – Generative AI for Engineering**
 
-> Grupo: _preencher nomes e RMs dos 4–5 integrantes_
+> Grupo: João Pedro de Souza Vieira, Rm:99805 | Lucas Pisaneschi Speranzini, Rm: 98297
 
 Projeto que ajusta (fine-tuning com LoRA) um LLM open-source, **treinado e executado por nós em GPU NVIDIA** (runtime do Google Colab acessado pelo VSCode), para atuar como assistente de diagnóstico de falhas em equipamentos industriais. O usuário descreve o problema em linguagem natural e o modelo responde em um formato padronizado de quatro seções: **Causa provável, Verificações, Ação recomendada e Segurança**.
 
@@ -45,7 +45,6 @@ Por que Qwen2.5-Instruct: licença aberta, bom desempenho em português para o t
 │   └── app.py                   # frontend Gradio
 ├── notebooks/run_colab.ipynb    # roda tudo em GPU NVIDIA do Colab (para quem não tem GPU NVIDIA local)
 ├── results/                     # CSVs/JSONs das avaliações e experimentos
-├── docs/img/                    # prints da GPU e gráficos
 ├── requirements.txt
 └── README.md
 ```
@@ -75,12 +74,48 @@ python src/prepare_data.py                 # gera data/train.jsonl e data/val.js
 python src/train.py --name baseline        # um treino (LoRA r=8, lr=2e-4, 3 épocas)
 python src/evaluate.py --tag base          # avalia o modelo SEM fine-tuning
 python src/evaluate.py --adapter outputs/baseline/adapter --tag baseline
-python src/run_experiments.py              # bateria completa (o tempo varia conforme a GPU; anote o tempo real no relatório) de experimentos (use --quick para uma versão rápida)
+python src/run_experiments.py              # bateria de experimentos (use --quick para a versão rápida)
 python src/plot_results.py                 # gráficos em docs/img/
 python src/app.py                          # frontend em http://127.0.0.1:7860
 ```
 
 Todos os scripts abortam com erro se não houver GPU CUDA, garantindo que os testes foram feitos em GPU.
+
+### 6.1 Rodando no VSCode com o Google Colab (sem GPU NVIDIA local)
+
+Quem não tem GPU NVIDIA no computador (por exemplo, GPU integrada Intel) pode usar uma GPU do Google Colab **de dentro do VSCode**. O notebook `notebooks/run_colab.ipynb` executa todo o projeto no runtime remoto: o código é baixado do GitHub, o treino roda na GPU do Colab e a interface do VSCode é a mesma de sempre.
+
+**Pré-requisitos:** VSCode, uma conta Google e o código deste projeto já publicado no GitHub.
+
+1. **Instale as extensões** no VSCode: **Jupyter** (Microsoft) e **Google Colab** (publisher: Google). Pelo painel de extensões, pesquise por "Google Colab".
+2. **Abra** o arquivo `notebooks/run_colab.ipynb` no VSCode.
+3. **Conecte ao Colab:** clique em *Select Kernel* (canto superior direito do notebook), escolha **Colab**, crie um novo servidor (*New Colab Server*), selecione um runtime com **GPU** e faça login com a conta Google quando pedido. O VSCode passa a mostrar o servidor conectado e o uso de GPU/RAM no painel lateral.
+4. **Edite a célula 2** e troque `REPO_URL` pelo link do seu repositório (`https://github.com/<usuario>/<repositorio>.git`). Se o repositório for privado, use um token de acesso na URL e não o publique.
+5. **Execute as células em ordem** (uma por vez, esperando terminar):
+
+| Célula | O que faz |
+|---|---|
+| 1 | `nvidia-smi` e teste do PyTorch: confirma a GPU (print de evidência). Se mostrar "Sem GPU", volte ao passo 3 e escolha um runtime com GPU |
+| 2 | Clona o repositório |
+| 3 | Instala as dependências e remove o `torchao` do Colab, que é incompatível com o PEFT |
+| 4 | `check_gpu.py`: informações da GPU e benchmark |
+| 5 | `prepare_data.py`: gera `train.jsonl` e `val.jsonl` |
+| 6 | Avalia o modelo base e roda um treino de teste (variável `MODEL` define o modelo) |
+| 7 | `run_experiments.py --quick`: bateria de experimentos e varredura de temperatura |
+| 8 | Gráficos e tabelas de resultados |
+| 9 | Respostas lado a lado (base, fine-tuned e referência) para a análise qualitativa |
+| 10 | Frontend Gradio com link público (`--share`): abra o link `gradio.live` mostrado na saída |
+| 11 | Compacta `results/` e `docs/img/` para baixar (ou copia para o Google Drive) |
+
+6. **Salve os resultados antes de encerrar.** O disco do Colab é temporário: ao desconectar ou expirar a sessão, tudo o que foi gerado é perdido. Use a célula 11 e depois coloque `results/` e `docs/img/` no repositório e faça commit.
+
+**Observações e problemas conhecidos**
+
+- **A GPU gratuita não é garantida** e o Colab pode desconectar por inatividade. Mantenha o VSCode aberto durante a execução e salve os resultados assim que terminar.
+- **Comandos com `!` não ficam vermelhos quando o script falha.** O check verde só indica que a célula terminou. Leia o final da saída e confira se os arquivos esperados existem (`!ls results outputs`). O `evaluate.py` aborta com erro se o adaptador não existir, o que evita avaliar o modelo errado sem aviso.
+- **Mensagens que podem ser ignoradas:** `Could not find cuda drivers... GPU will not be used` vem do TensorFlow (não usado no projeto) e o PyTorch usa a GPU normalmente; o aviso `diffusers ... requires huggingface-hub` do `pip` não afeta este projeto.
+- **Memória (`out of memory`):** troque `MODEL` na célula 6 (e use o mesmo valor nas células seguintes) para `Qwen/Qwen2.5-0.5B-Instruct`.
+- **Tempo:** na nossa execução, o treino de uma configuração levou cerca de 10 minutos em uma Tesla T4 e menos de 1 minuto em uma A100; cada avaliação de 12 respostas levou 2 a 3 minutos. O `--quick` levou cerca de 45 minutos na T4. A bateria completa (sem `--quick`) leva bem mais.
 
 ## 7. Parâmetros testados
 
@@ -108,12 +143,10 @@ Conjunto de validação com **12 relatos** que não foram usados no treino. Gera
 
 | Experimento | token F1 | estrutura | eval_loss | perplexidade | loss de treino | tempo de treino (s) | VRAM de pico (GB) |
 |---|---|---|---|---|---|---|---|
-| base (sem fine-tuning) | ⚠ ≈0,29 | ⚠ 1,00 | – | – | – | – | – |
+| base (sem fine-tuning) | 0,2853 | 1,00 | – | – | – | – | – |
 | **baseline** (r=8, lr=2e-4, 3 ép.) | **0,4397** | 1,00 | **1,844** | **6,32** | 1,236 | 41,5 | 9,52 |
 | r16 | 0,4111 | 1,00 | 2,118 | 8,32 | 0,978 | 40,3 | 9,67 |
 | lr5e-4 | 0,4087 | 1,00 | 2,616 | 13,68 | 0,746 | 41,5 | 9,52 |
-
-> ⚠ Os valores da linha "base" (F1 e estrutura) foram lidos do gráfico; o valor exato está em `results/eval_base.json` e deve substituir estes antes da entrega.
 
 **Temperatura de geração** (adaptador baseline):
 
@@ -124,9 +157,11 @@ Conjunto de validação com **12 relatos** que não foram usados no treino. Gera
 | 0.7 | 0,3939 | 1,00 | 13,1 |
 | 1.0 | 0,3729 | 1,00 | 13,3 |
 
-![Comparação](docs/img/experimentos_f1.png)
+<img width="1350" height="600" alt="image" src="https://github.com/user-attachments/assets/ba52aeed-6e51-4dbe-b98d-e41325c32272" />
 
-![Loss de treino](docs/img/curvas_loss.png)
+
+<img width="1200" height="600" alt="image" src="https://github.com/user-attachments/assets/160a4b73-d9a6-4808-bcb8-36ee7139026b" />
+
 
 _Nota: a curva `best` é uma cópia da `baseline` (o script copia a melhor configuração para `outputs/best`), por isso as duas se sobrepõem._
 
@@ -185,7 +220,7 @@ O fine-tuned respondeu de forma curta, completa e no formato pedido, e acertou a
 
 `python src/app.py` abre uma interface Gradio onde o usuário escreve o prompt (o relato do problema), escolhe entre o **modelo base** e o **fine-tuned**, ajusta temperatura, top_p e tamanho máximo da resposta e vê a latência e a GPU em uso. No Colab, use `python src/app.py --share` para obter um link público temporário (`https://...gradio.live`).
 
-![Frontend](docs/img/frontend.png)
+<img width="1917" height="1061" alt="image" src="https://github.com/user-attachments/assets/5ecff428-a0f7-45ed-923f-bf9a0c1a8721" />
 
 ## 10. Evidência da GPU no VSCode
 
@@ -198,7 +233,8 @@ Os testes foram feitos em **GPU NVIDIA com CUDA**, usando o VSCode com as extens
 
 O `check_gpu.py` na A100 reportou compute capability 8.0 e uma multiplicação de matrizes 4096×4096 cerca de 429 vezes mais rápida que na CPU.
 
-![GPU no VSCode](docs/img/gpu_vscode.png)
+<img width="1917" height="1078" alt="image" src="https://github.com/user-attachments/assets/81932e9a-3f2d-440f-894d-95eb9cfaa143" />
+
 
 ## 11. Tecnologias
 

@@ -1,0 +1,11 @@
+{
+  "tag": "lr5e-4",
+  "adapter": "outputs/lr5e-4/adapter",
+  "temperature": 0.0,
+  "top_p": 0.9,
+  "max_new_tokens": 256,
+  "token_f1": 0.4087,
+  "structure": 1.0,
+  "tokens_per_s": 13.2,
+  "n": 12
+}
